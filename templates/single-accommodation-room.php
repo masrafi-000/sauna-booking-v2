@@ -265,13 +265,14 @@ while (have_posts()) : the_post();
                 <textarea name="notes" rows="3" placeholder="Any special requests or information?" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
             </div>
 
-            <div class="sb-amount-total" id="sbAccAmountTotal"></div>
+            <div id="sbAccFormErrors" class="sb-card-errors" style="color:#b91c1c; background:#fef2f2; padding:12px; border-radius:8px; margin-bottom:20px; display:none;"></div>
+
+            <div class="sb-amount-total" id="sbAccAmountTotal" style="margin-top:20px; text-align:right; font-weight:700; font-size:18px; color:var(--sb-green); margin-bottom:15px;"></div>
             
             <button type="submit" class="sb-pay-btn" id="acc-submit-btn">
                 <span id="sbPayBtnText">Request Reservation</span>
                 <span id="sbPayBtnSpinner" class="sb-spinner" style="display:none;"></span>
             </button>
-            <div id="sbAccFormErrors" class="sb-card-errors" style="color:#b91c1c; background:#fef2f2; padding:12px; border-radius:8px; margin-bottom:20px; display:none;"></div>
 
             <div class="sb-secure-note">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -546,6 +547,12 @@ function updateBookingSummary() {
     
     document.getElementById('sbCheckIn').value = checkIn;
     document.getElementById('sbCheckOut').value = checkOut;
+    
+    // Update button text with price
+    const submitBtnText = document.querySelector('#acc-submit-btn #sbPayBtnText');
+    if (submitBtnText) {
+        submitBtnText.innerText = `Request Reservation — ${currency}${total.toFixed(2)}`;
+    }
     
     document.getElementById('sbAccBookingSummary').innerHTML = `
         <div style="background:var(--sb-green-pale); padding:15px; border-radius:10px; margin-bottom:20px;">

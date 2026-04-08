@@ -20,19 +20,19 @@
   };
 
   /* ── DOM refs ────────────────────────────────────────────── */
-  var $calOverlay = $("#sbCalendarOverlay");
-  var $bookOverlay = $("#sbBookingOverlay");
-  var $calDays = $("#sbCalDays");
-  var $monthLabel = $("#sbCalMonthLabel");
-  var $slotsList = $("#sbSlotsList");
-  var $slotsDateLbl = $("#sbSlotsDateLabel");
-  var $bookingForm = $("#sbBookingForm");
-  var $bookingSuccess = $("#sbBookingSuccess");
-  var $payBtn = $("#sbPayBtn");
-  var $payBtnText = $("#sbPayBtnText");
-  var $payBtnSpinner = $("#sbPayBtnSpinner");
-  var $amountTotal = $("#sbAmountTotal");
-  var $cardErrors = $("#sbFormErrors");
+  var $calOverlay,
+    $bookOverlay,
+    $calDays,
+    $monthLabel,
+    $slotsList,
+    $slotsDateLbl,
+    $bookingForm,
+    $bookingSuccess,
+    $payBtn,
+    $payBtnText,
+    $payBtnSpinner,
+    $amountTotal,
+    $cardErrors;
 
   var MONTHS = [
     "January",
@@ -54,6 +54,21 @@
   $(document).ready(function () {
     var $product = $(".sb-single-product");
     if (!$product.length) return;
+
+    // Initialize DOM refs
+    $calOverlay = $("#sbCalendarOverlay");
+    $bookOverlay = $("#sbBookingOverlay");
+    $calDays = $("#sbCalDays");
+    $monthLabel = $("#sbCalMonthLabel");
+    $slotsList = $("#sbSlotsList");
+    $slotsDateLbl = $("#sbSlotsDateLabel");
+    $bookingForm = $("#sbBookingForm");
+    $bookingSuccess = $("#sbBookingSuccess");
+    $payBtn = $("#sbPayBtn");
+    $payBtnText = $("#sbPayBtnText");
+    $payBtnSpinner = $("#sbPayBtnSpinner");
+    $amountTotal = $("#sbAmountTotal");
+    $cardErrors = $("#sbFormErrors");
 
     state.productId = parseInt($product.data("product-id"), 10);
     state.priceEach = parseFloat($product.data("price")) || 0;
@@ -304,6 +319,10 @@
         "<strong>Time:</strong> " +
         slot.label +
         "<br>" +
+        "<strong>Price per seat:</strong> " +
+        SB_Data.currency_symbol +
+        state.priceEach.toFixed(2) +
+        "<br>" +
         "<strong>Available seats:</strong> " +
         slot.available,
     );
@@ -337,14 +356,25 @@
   function recalcTotal() {
     var seats = parseInt($("#sbSeats").val(), 10) || 1;
     var total = (state.priceEach * seats).toFixed(2);
-    $amountTotal.html(
-      "Total: <span>" +
-        SB_Data.currency_symbol +
-        total +
-        " " +
-        SB_Data.currency +
-        "</span>",
-    ).show();
+    var formattedTotal = SB_Data.currency_symbol + total + " " + SB_Data.currency;
+
+    // 1. Update the dedicated total display above the button
+    $("#sbAmountTotal").html("Total: <span>" + formattedTotal + "</span>").show();
+
+    // 2. Update the button text to include the price for direct visibility
+    $("#sbPayBtnText").text("Request Reservation — " + SB_Data.currency_symbol + total);
+
+    // 3. Keep the booking summary updated in the background
+    var currentSummary = $("#sbBookingSummary").html();
+    if (currentSummary && currentSummary.indexOf("<strong>Total:</strong>") !== -1) {
+      currentSummary = currentSummary.replace(
+        /<strong>Total:<\/strong>.*$/,
+        "<strong>Total:</strong> " + formattedTotal,
+      );
+    } else if (currentSummary) {
+      currentSummary += "<br><strong>Total:</strong> " + formattedTotal;
+    }
+    $("#sbBookingSummary").html(currentSummary);
   }
 
   /* ── Handle booking query submission ────────────────────── */

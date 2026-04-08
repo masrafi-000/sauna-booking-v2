@@ -438,7 +438,7 @@ while (have_posts()) : the_post();
 
             <div id="sbFormErrors" class="sb-card-errors" style="color:#b91c1c; background:#fef2f2; padding:12px; border-radius:8px; margin-bottom:20px; display:none;"></div>
 
-            <div class="sb-amount-total" id="sbAccAmountTotal"></div>
+            <div class="sb-amount-total" id="sbAmountTotal" style="margin-top:20px;"></div>
             
             <button type="submit" class="sb-pay-btn" id="sbPayBtn">
                 <span id="sbPayBtnText">Request Reservation</span>
