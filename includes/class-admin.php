@@ -229,6 +229,24 @@ class SB_Admin {
         }
 
         wp_mail( $booking->email, $subject, $message, $headers );
+
+        // Also notify admin of status change
+        $admin_email   = get_option('sb_admin_email') ?: get_option('admin_email');
+        $admin_subject = "Booking {$status}: {$product_title} – {$booking->first_name} {$booking->last_name}";
+        $admin_message = "
+        <html><body style='font-family:sans-serif;color:#333;'>
+        <h2 style='color:#c97d30;'>Booking Status Updated: " . ucfirst($status) . "</h2>
+        <p>The status for a sauna booking has been updated.</p>
+        <table style='border-collapse:collapse;width:100%;max-width:500px;'>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Customer</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>{$booking->first_name} {$booking->last_name}</td></tr>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Email</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>{$booking->email}</td></tr>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Sauna</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>{$product_title}</td></tr>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>New Status</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'><strong>" . ucfirst($status) . "</strong></td></tr>
+        </table>
+        <p style='margin-top:24px;'><a href='" . admin_url('edit.php?post_type=sauna_product&page=sb-bookings') . "' style='display:inline-block;padding:10px 20px;background:#c97d30;color:#fff;text-decoration:none;border-radius:4px;'>View All Bookings</a></p>
+        </body></html>";
+        
+        wp_mail( $admin_email, $admin_subject, $admin_message, $headers );
     }
 
     public static function ajax_delete_booking() {

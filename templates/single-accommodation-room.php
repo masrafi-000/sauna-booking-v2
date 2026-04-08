@@ -265,7 +265,7 @@ while (have_posts()) : the_post();
                 <textarea name="notes" rows="3" placeholder="Any special requests or information?" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;"></textarea>
             </div>
 
-            <div class="sb-amount-total" id="sbAccAmountTotal" style="display:none;"></div>
+            <div class="sb-amount-total" id="sbAccAmountTotal"></div>
             
             <button type="submit" class="sb-pay-btn" id="acc-submit-btn">
                 <span id="sbPayBtnText">Request Reservation</span>
@@ -531,6 +531,9 @@ function updateSelectionUI() {
                 <div class="sb-meta-item">Check-in: <strong>${checkIn}</strong></div>
                 <div class="sb-meta-item">Check-out: <strong>${checkOut}</strong></div>
                 <div class="sb-meta-item">Duration: <strong>${nights} night${nights > 1 ? 's' : ''}</strong></div>
+                <div class="sb-card-price" style="margin-top:10px;">
+                    <span class="sb-price-amount">${currency}${(nights * roomPrice).toFixed(2)}</span>
+                </div>
             </div>
         `;
     }
@@ -548,10 +551,10 @@ function updateBookingSummary() {
         <div style="background:var(--sb-green-pale); padding:15px; border-radius:10px; margin-bottom:20px;">
             <p style="margin:0; font-weight:600;">Check-in: ${checkIn}</p>
             <p style="margin:5px 0; font-weight:600;">Check-out: ${checkOut}</p>
-            <p style="margin:0; color:var(--sb-green);">Duration: ${nights} nights</p>
+            <p style="margin:0; color:var(--sb-green);">Total: ${currency}${total.toFixed(2)} (${nights} nights)</p>
         </div>
     `;
-    document.getElementById('sbAccAmountTotal').innerText = '';
+    document.getElementById('sbAccAmountTotal').innerText = `Total Amount: ${currency}${total.toFixed(2)}`;
 }
 
 async function processBooking() {

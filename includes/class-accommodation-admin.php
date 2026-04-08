@@ -247,5 +247,23 @@ class SB_Accommodation_Admin
         }
 
         wp_mail($booking->guest_email, $subject, $message, $headers);
+
+        // Also notify admin of status change
+        $admin_email   = get_option('sb_admin_email') ?: get_option('admin_email');
+        $admin_subject = "Reservation {$status}: {$room_title} – {$booking->guest_name}";
+        $admin_message = "
+        <html><body style='font-family:sans-serif;color:#333;'>
+        <h2 style='color:#111b19;'>Reservation Status Updated: " . ucfirst($status) . "</h2>
+        <p>The status for an accommodation reservation has been updated.</p>
+        <table style='border-collapse:collapse;width:100%;max-width:500px;'>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Guest</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>{$booking->guest_name}</td></tr>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Email</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>{$booking->guest_email}</td></tr>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Room</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>{$room_title}</td></tr>
+            <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>New Status</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'><strong>" . ucfirst($status) . "</strong></td></tr>
+        </table>
+        <p style='margin-top:24px;'><a href='" . admin_url('edit.php?post_type=accommodation_room&page=accommodation_bookings') . "' style='display:inline-block;padding:10px 20px;background:#111b19;color:#fff;text-decoration:none;border-radius:4px;'>View All Bookings</a></p>
+        </body></html>";
+        
+        wp_mail($admin_email, $admin_subject, $admin_message, $headers);
     }
 }

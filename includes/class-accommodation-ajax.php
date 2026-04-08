@@ -230,9 +230,9 @@ class SB_Accommodation_Ajax
         $message_guest = "
         <html><body style='font-family:sans-serif;color:#333;line-height:1.6;'>
         <div style='max-width:600px;margin:20px auto;border:1px solid #eee;padding:30px;border-radius:8px;'>
-            <h2 style='color:#111b19;margin-top:0;'>Your Reservation Query has been Received</h2>
+            <h2 style='color:#111b19;margin-top:0;'>Your Reservation Request has been Successfully Sent</h2>
             <p>Hi " . esc_html($booking->guest_name) . ",</p>
-            <p>Thank you for your interest. We have received your reservation request for <strong>" . esc_html($room_title) . "</strong>. Your request is currently <strong>Pending</strong> and we will contact you soon with a confirmation.</p>
+            <p>Thank you for your interest. We have received your reservation request for <strong>" . esc_html($room_title) . "</strong>. Your request is currently <strong>Pending</strong>, and we will contact you within 2/3 hours for confirmation.</p>
             
             <div style='background:#f9fcfb;padding:20px;border-radius:8px;margin:25px 0;'>
                 <table style='width:100%;border-collapse:collapse;'>

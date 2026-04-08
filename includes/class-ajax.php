@@ -198,9 +198,9 @@ class SB_Ajax {
 
         $message_guest = "
         <html><body style='font-family:sans-serif;color:#333;'>
-        <h2 style='color:#c97d30;'>Your Booking Query has been Received</h2>
+        <h2 style='color:#c97d30;'>Your Booking Request has been Successfully Sent</h2>
         <p>Hi {$booking->first_name},</p>
-        <p>Thank you for your interest. We have received your booking query for <strong>{$product_title}</strong>. Your request is currently <strong>Pending</strong> and we will contact you soon with a confirmation.</p>
+        <p>Thank you for your interest. We have received your booking request for <strong>{$product_title}</strong>. Your request is currently <strong>Pending</strong>, and we will contact you within 2/3 hours for confirmation.</p>
         <table style='border-collapse:collapse;width:100%;max-width:500px;'>
             <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Date</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>" . date('l, F j, Y', strtotime($booking->booking_date)) . "</td></tr>
             <tr><td style='padding:8px;border-bottom:1px solid #eee;'><strong>Time</strong></td><td style='padding:8px;border-bottom:1px solid #eee;'>{$booking->time_slot_start} – {$booking->time_slot_end}</td></tr>

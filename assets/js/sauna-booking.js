@@ -344,7 +344,7 @@
         " " +
         SB_Data.currency +
         "</span>",
-    ).hide();
+    ).show();
   }
 
   /* ── Handle booking query submission ────────────────────── */
