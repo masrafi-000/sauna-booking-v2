@@ -4,9 +4,23 @@
 .sb-admin-filters select,
 .sb-admin-filters input[type="text"] { margin: 0 4px; }
 .sb-status-badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
-.sb-status-confirmed  { background:#d4edda; color:#155724; }
-.sb-status-pending    { background:#fff3cd; color:#856404; }
-.sb-status-cancelled  { background:#f8d7da; color:#842029; }
+.sb-status-confirmed, .status-confirmed  { background:#d4edda; color:#155724; }
+.sb-status-pending, .status-pending      { background:#fff3cd; color:#856404; }
+.sb-status-cancelled, .status-cancelled  { background:#f8d7da; color:#842029; }
 .sb-actions { display:flex; gap:4px; flex-wrap:wrap; align-items:center; }
 .sb-bookings-table td { vertical-align:middle; padding:8px 12px; }
 .sb-total-count { color:#555; font-size:13px; }
+
+/* Booking Details Page */
+.sb-details-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+.sb-details-card { background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04); }
+.sb-details-card h2 { margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px; font-size: 1.3em; }
+.sb-details-card .form-table th { width: 160px; padding: 10px 10px 10px 0; font-weight: 600; }
+.sb-details-card .form-table td { padding: 10px; }
+.sb-details-full { grid-column: 1 / -1; }
+.sb-notes-box { background:#f9f9f9; border-left:4px solid #c97d30; padding:15px; font-style:italic; line-height:1.6; white-space: pre-wrap; }
+.sb-price { font-weight:700; color:#c97d30; font-size: 1.1em; }
+
+@media (max-width: 782px) {
+    .sb-details-grid { grid-template-columns: 1fr; }
+}

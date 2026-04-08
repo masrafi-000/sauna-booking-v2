@@ -139,12 +139,6 @@ class SB_Accommodation_Admin
 
             <?php endif; ?>
 
-            <style>
-                .sb-status-badge { padding:3px 8px; border-radius:30px; font-size:11px; font-weight:600; text-transform:uppercase; display:inline-block; }
-                .status-pending { color: #856404; background: #fff3cd; }
-                .status-confirmed { color: #155724; background: #d4edda; }
-                .status-cancelled { color: #721c24; background: #f8d7da; }
-            </style>
         </div>
 <?php
     }
@@ -159,54 +153,63 @@ class SB_Accommodation_Admin
         }
 
         $room_title = get_the_title($booking->room_type_id);
-?>
-        <div class="wrap">
-            <a href="<?php echo admin_url('edit.php?post_type=accommodation_room&page=accommodation_bookings'); ?>" class="button" style="margin-bottom:20px;">&larr; Back to Bookings</a>
-            <h1>Booking Details #<?php echo $booking->id; ?></h1>
+?>        <div class="wrap">
+            <h1 class="wp-heading-inline">Reservation Details #<?php echo $booking->id; ?></h1>
+            <a href="<?php echo admin_url('edit.php?post_type=accommodation_room&page=accommodation_bookings'); ?>" class="page-title-action">Back to List</a>
+            <hr class="wp-header-end">
 
-            <div class="sb-booking-details-grid">
-                <div class="sb-detail-card">
-                    <h3>Guest Information</h3>
-                    <p><strong>Name:</strong> <?php echo esc_html($booking->guest_name); ?></p>
-                    <p><strong>Email:</strong> <a href="mailto:<?php echo esc_attr($booking->guest_email); ?>"><?php echo esc_html($booking->guest_email); ?></a></p>
-                    <p><strong>Phone:</strong> <?php echo esc_html($booking->guest_phone ?: 'N/A'); ?></p>
+            <div class="sb-details-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;">
+                <!-- Guest Info -->
+                <div class="sb-details-card" style="background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Guest Information</h2>
+                    <table class="form-table">
+                        <tr><th style="width:150px;">Full Name</th><td><?php echo esc_html($booking->guest_name); ?></td></tr>
+                        <tr><th>Email Address</th><td><a href="mailto:<?php echo esc_attr($booking->guest_email); ?>"><?php echo esc_html($booking->guest_email); ?></a></td></tr>
+                        <tr><th>Phone Number</th><td><?php echo esc_html($booking->guest_phone ?: 'N/A'); ?></td></tr>
+                    </table>
                 </div>
 
-                <div class="sb-detail-card">
-                    <h3>Booking Items</h3>
-                    <p><strong>Room:</strong> <?php echo esc_html($room_title); ?></p>
-                    <p><strong>Check-in:</strong> <?php echo date('F j, Y', strtotime($booking->check_in_date)); ?></p>
-                    <p><strong>Check-out:</strong> <?php echo date('F j, Y', strtotime($booking->check_out_date)); ?></p>
-                    <p><strong>Occupants:</strong> <?php echo intval($booking->occupant_count); ?></p>
+                <!-- Booking Info -->
+                <div class="sb-details-card" style="background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Reservation Details</h2>
+                    <table class="form-table">
+                        <tr><th style="width:150px;">Room</th><td><strong><?php echo esc_html($room_title); ?></strong></td></tr>
+                        <tr><th>Check-in</th><td><?php echo date('l, F j, Y', strtotime($booking->check_in_date)); ?></td></tr>
+                        <tr><th>Check-out</th><td><?php echo date('l, F j, Y', strtotime($booking->check_out_date)); ?></td></tr>
+                        <tr><th>Guests</th><td><?php echo intval($booking->occupant_count); ?></td></tr>
+                        <tr><th>Total Amount</th><td><span class="sb-price" style="font-weight:700; color:#111b19;"><?php echo esc_html(get_option('sb_currency_symbol', '₱') . number_format($booking->total_amount, 2)); ?></span></td></tr>
+                        <tr><th>Status</th><td>
+                            <span class="sb-status-badge status-<?php echo esc_attr($booking->booking_status); ?>">
+                                <?php echo ucfirst($booking->booking_status); ?>
+                            </span>
+                        </td></tr>
+                    </table>
                 </div>
 
-                <div class="sb-detail-card">
-                    <h3>Payment & Status</h3>
-                    <p><strong>Status:</strong> <span class="sb-status-badge status-<?php echo esc_attr($booking->booking_status); ?>"><?php echo ucfirst($booking->booking_status); ?></span></p>
-                    <p><strong>Total Amount:</strong> <?php echo esc_html(get_option('sb_currency_symbol', '₱') . number_format($booking->total_amount, 2)); ?></p>
-                    <p><strong>Stripe PI:</strong> <code><?php echo esc_html($booking->stripe_pi_id ?: 'N/A'); ?></code></p>
-                    <p><strong>Created:</strong> <?php echo date('Y-m-d H:i', strtotime($booking->created_at)); ?></p>
-                    <div style="margin-top:20px; display:flex; gap:10px;">
+                <!-- Additional Notes -->
+                <div class="sb-details-card sb-details-full" style="grid-column: 1 / -1; background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Additional Notes</h2>
+                    <?php if ( !empty($booking->notes) ) : ?>
+                        <div class="sb-notes-box" style="background:#f9f9f9; border-left:4px solid #111b19; padding:15px; font-style:italic; line-height:1.6;"><?php echo nl2br(esc_html($booking->notes)); ?></div>
+                    <?php else : ?>
+                        <p class="description">No notes provided by the guest.</p>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Admin Actions -->
+                <div class="sb-details-card sb-details-full" style="grid-column: 1 / -1; background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Manage Reservation</h2>
+                    <div style="display:flex; gap:10px;">
                         <?php if ($booking->booking_status !== 'confirmed') : ?>
-                            <a href="<?php echo wp_nonce_url(admin_url("edit.php?post_type=accommodation_room&page=accommodation_bookings&action=confirmed&booking_id=" . $booking->id), 'acc_admin_action'); ?>" class="button button-primary button-large">Approve Booking</a>
+                            <a href="<?php echo wp_nonce_url(admin_url("edit.php?post_type=accommodation_room&page=accommodation_bookings&action=confirmed&booking_id=" . $booking->id), 'acc_admin_action'); ?>" class="button button-primary">Approve Booking</a>
                         <?php endif; ?>
                         <?php if ($booking->booking_status !== 'cancelled') : ?>
-                            <a href="<?php echo wp_nonce_url(admin_url("edit.php?post_type=accommodation_room&page=accommodation_bookings&action=cancelled&booking_id=" . $booking->id), 'acc_admin_action'); ?>" class="button button-large" onclick="return confirm('Cancel this booking?')">Cancel Booking</a>
+                            <a href="<?php echo wp_nonce_url(admin_url("edit.php?post_type=accommodation_room&page=accommodation_bookings&action=cancelled&booking_id=" . $booking->id), 'acc_admin_action'); ?>" class="button" onclick="return confirm('Cancel this booking?')">Cancel Booking</a>
                         <?php endif; ?>
-                        <a href="<?php echo wp_nonce_url(admin_url("edit.php?post_type=accommodation_room&page=accommodation_bookings&action=delete&booking_id=" . $booking->id), 'acc_admin_action'); ?>" class="button button-large" style="color:#a00; border-color:#a00;" onclick="return confirm('PERMANENTLY DELETE this booking? This cannot be undone.')">Delete Booking</a>
+                        <a href="<?php echo wp_nonce_url(admin_url("edit.php?post_type=accommodation_room&page=accommodation_bookings&action=delete&booking_id=" . $booking->id), 'acc_admin_action'); ?>" class="button" onclick="return confirm('PERMANENTLY DELETE this booking? This cannot be undone.')">Delete Booking</a>
                     </div>
                 </div>
             </div>
-
-            <style>
-                .sb-booking-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 20px; }
-                .sb-detail-card { background: #fff; border: 1px solid #ccd0d4; padding: 20px; border-radius: 4px; }
-                .sb-detail-card h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-                .sb-detail-card p { font-size: 14px; margin: 10px 0; }
-                .sb-status-badge { padding:3px 10px; border-radius:30px; font-size:11px; font-weight:600; text-transform:uppercase; }
-                .status-pending { color: #856404; background: #fff3cd; }
-                .status-confirmed { color: #155724; background: #d4edda; }
-            </style>
         </div>
 <?php
     }

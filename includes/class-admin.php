@@ -28,6 +28,12 @@ class SB_Admin {
     }
 
     public static function render_bookings_page() {
+        $view_id = absint( $_GET['view_id'] ?? 0 );
+        if ( $view_id ) {
+            self::render_single_booking_view( $view_id );
+            return;
+        }
+
         $filter_status  = sanitize_text_field( $_GET['status']  ?? '' );
         $filter_product = absint( $_GET['product_id'] ?? 0 );
         $paged          = max( 1, intval( $_GET['paged'] ?? 1 ) );
@@ -110,6 +116,7 @@ class SB_Admin {
                             </td>
                             <td><?php echo esc_html( date('M j, Y H:i', strtotime($b->created_at)) ); ?></td>
                             <td class="sb-actions">
+                                <a href="<?php echo admin_url('edit.php?post_type=sauna_product&page=sb-bookings&view_id=' . $b->id); ?>" class="button button-small">View</a>
                                 <?php if ($b->status !== 'confirmed') : ?>
                                 <button class="button button-small sb-confirm-btn" data-id="<?php echo $b->id; ?>" data-status="confirmed">Confirm</button>
                                 <?php endif; ?>
@@ -166,6 +173,100 @@ class SB_Admin {
                 if (!confirm('Permanently delete booking #' + id + '?')) return;
                 $.post(ajaxurl, {action:'sb_delete_booking', nonce: nonce, booking_id: id}, function(res){
                     if (res.success) $('#sb-row-' + id).fadeOut(400, function(){ $(this).remove(); });
+                    else alert(res.data.message || 'Error');
+                });
+            });
+        });
+        </script>
+        <?php
+    }
+
+    public static function render_single_booking_view( $id ) {
+        $booking = SB_Database::get_booking( $id );
+        if ( ! $booking ) {
+            echo '<div class="wrap"><h1>Booking not found.</h1></div>';
+            return;
+        }
+        $product_title = get_the_title( $booking->product_id );
+        $currency      = get_option( 'sb_currency_symbol', '₱' );
+        ?>
+        <div class="wrap sb-admin-wrap">
+            <h1 class="wp-heading-inline">Booking Details #<?php echo $booking->id; ?></h1>
+            <a href="<?php echo admin_url('edit.php?post_type=sauna_product&page=sb-bookings'); ?>" class="page-title-action">Back to List</a>
+            <hr class="wp-header-end">
+
+            <div class="sb-details-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;">
+                <!-- Guest Info -->
+                <div class="sb-details-card" style="background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Guest Information</h2>
+                    <table class="form-table">
+                        <tr><th style="width:150px;">Full Name</th><td><?php echo esc_html($booking->first_name . ' ' . $booking->last_name); ?></td></tr>
+                        <tr><th>Email Address</th><td><a href="mailto:<?php echo esc_attr($booking->email); ?>"><?php echo esc_html($booking->email); ?></a></td></tr>
+                        <tr><th>Phone Number</th><td><?php echo esc_html($booking->phone ?: 'N/A'); ?></td></tr>
+                    </table>
+                </div>
+
+                <!-- Booking Info -->
+                <div class="sb-details-card" style="background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Booking Details</h2>
+                    <table class="form-table">
+                        <tr><th style="width:150px;">Sauna</th><td><strong><?php echo esc_html($product_title); ?></strong></td></tr>
+                        <tr><th>Date</th><td><?php echo esc_html( date('l, F j, Y', strtotime($booking->booking_date)) ); ?></td></tr>
+                        <tr><th>Time Slot</th><td><?php echo esc_html($booking->time_slot_start . ' – ' . $booking->time_slot_end); ?></td></tr>
+                        <tr><th>Seats</th><td><?php echo intval($booking->seats_booked); ?></td></tr>
+                        <tr><th>Total Amount</th><td><span class="sb-price" style="font-weight:700; color:#c97d30;"><?php echo esc_html($currency . number_format($booking->amount, 2)); ?></span></td></tr>
+                        <tr><th>Status</th><td>
+                            <span class="sb-status-badge sb-status-<?php echo esc_attr($booking->status); ?>">
+                                <?php echo esc_html(ucfirst($booking->status)); ?>
+                            </span>
+                        </td></tr>
+                    </table>
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="sb-details-card sb-details-full" style="grid-column: 1 / -1; background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Additional Notes</h2>
+                    <?php if ( $booking->notes ) : ?>
+                        <div class="sb-notes-box" style="background:#f9f9f9; border-left:4px solid #c97d30; padding:15px; font-style:italic; line-height:1.6;"><?php echo nl2br(esc_html($booking->notes)); ?></div>
+                    <?php else : ?>
+                        <p class="description">No notes provided by the guest.</p>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Admin Actions -->
+                <div class="sb-details-card sb-details-full" style="grid-column: 1 / -1; background:#fff; border:1px solid #ccd0d4; padding:20px; box-shadow:0 1px 1px rgba(0,0,0,.04);">
+                    <h2 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">Manage Booking</h2>
+                    <div class="sb-actions">
+                        <?php if ($booking->status !== 'confirmed') : ?>
+                        <button class="button button-primary sb-confirm-btn" data-id="<?php echo $booking->id; ?>" data-status="confirmed">Confirm Booking</button>
+                        <?php endif; ?>
+                        <?php if ($booking->status !== 'cancelled') : ?>
+                        <button class="button sb-cancel-btn" data-id="<?php echo $booking->id; ?>" data-status="cancelled">Cancel Booking</button>
+                        <?php endif; ?>
+                        <button class="button button-link-delete sb-delete-btn" data-id="<?php echo $booking->id; ?>">Delete Permanently</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        jQuery(function($){
+            var nonce = '<?php echo wp_create_nonce("sb_admin_nonce"); ?>';
+            $(document).on('click', '.sb-confirm-btn, .sb-cancel-btn', function(){
+                var btn    = $(this);
+                var id     = btn.data('id');
+                var status = btn.data('status');
+                if (!confirm('Set booking #' + id + ' to "' + status + '"?')) return;
+                $.post(ajaxurl, {action:'sb_update_booking_status', nonce: nonce, booking_id: id, status: status}, function(res){
+                    if (res.success) location.reload();
+                    else alert(res.data.message || 'Error');
+                });
+            });
+            $(document).on('click', '.sb-delete-btn', function(){
+                var id = $(this).data('id');
+                if (!confirm('Permanently delete booking #' + id + '?')) return;
+                $.post(ajaxurl, {action:'sb_delete_booking', nonce: nonce, booking_id: id}, function(res){
+                    if (res.success) window.location.href = '<?php echo admin_url("edit.php?post_type=sauna_product&page=sb-bookings"); ?>';
                     else alert(res.data.message || 'Error');
                 });
             });
