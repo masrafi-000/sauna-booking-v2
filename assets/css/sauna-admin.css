@@ -1,0 +1,12 @@
+/* Sauna Booking – Admin CSS */
+.sb-admin-wrap h1 { margin-bottom: 6px; }
+.sb-admin-filters { margin: 14px 0 18px; }
+.sb-admin-filters select,
+.sb-admin-filters input[type="text"] { margin: 0 4px; }
+.sb-status-badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+.sb-status-confirmed  { background:#d4edda; color:#155724; }
+.sb-status-pending    { background:#fff3cd; color:#856404; }
+.sb-status-cancelled  { background:#f8d7da; color:#842029; }
+.sb-actions { display:flex; gap:4px; flex-wrap:wrap; align-items:center; }
+.sb-bookings-table td { vertical-align:middle; padding:8px 12px; }
+.sb-total-count { color:#555; font-size:13px; }
