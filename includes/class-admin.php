@@ -108,7 +108,7 @@ class SB_Admin {
                             <td><?php echo esc_html( date('D, M j, Y', strtotime($b->booking_date)) ); ?></td>
                             <td><?php echo esc_html($b->time_slot_start . ' – ' . $b->time_slot_end); ?></td>
                             <td><?php echo intval($b->seats_booked); ?></td>
-                            <td><?php echo esc_html($currency . number_format($b->amount, 2)); ?></td>
+                            <td><?php echo esc_html($currency . number_format($b->amount, 0)); ?></td>
                             <td>
                                 <span class="sb-status-badge sb-status-<?php echo esc_attr($b->status); ?>">
                                     <?php echo esc_html(ucfirst($b->status)); ?>
@@ -214,7 +214,7 @@ class SB_Admin {
                         <tr><th>Date</th><td><?php echo esc_html( date('l, F j, Y', strtotime($booking->booking_date)) ); ?></td></tr>
                         <tr><th>Time Slot</th><td><?php echo esc_html($booking->time_slot_start . ' – ' . $booking->time_slot_end); ?></td></tr>
                         <tr><th>Seats</th><td><?php echo intval($booking->seats_booked); ?></td></tr>
-                        <tr><th>Total Amount</th><td><span class="sb-price" style="font-weight:700; color:#c97d30;"><?php echo esc_html($currency . number_format($booking->amount, 2)); ?></span></td></tr>
+                        <tr><th>Total Amount</th><td><span class="sb-price" style="font-weight:700; color:#c97d30;"><?php echo esc_html($currency . number_format($booking->amount, 0)); ?></span></td></tr>
                         <tr><th>Status</th><td>
                             <span class="sb-status-badge sb-status-<?php echo esc_attr($booking->status); ?>">
                                 <?php echo esc_html(ucfirst($booking->status)); ?>

@@ -321,7 +321,7 @@
         "<br>" +
         "<strong>Price per seat:</strong> " +
         SB_Data.currency_symbol +
-        state.priceEach.toFixed(2) +
+        state.priceEach.toFixed(0) +
         "<br>" +
         "<strong>Available seats:</strong> " +
         slot.available,
@@ -355,7 +355,7 @@
   /* ── Recalc total display ────────────────────────────────── */
   function recalcTotal() {
     var seats = parseInt($("#sbSeats").val(), 10) || 1;
-    var total = (state.priceEach * seats).toFixed(2);
+    var total = (state.priceEach * seats).toFixed(0);
     var formattedTotal = SB_Data.currency_symbol + total + " " + SB_Data.currency;
 
     // 1. Update the dedicated total display above the button

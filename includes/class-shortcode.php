@@ -93,7 +93,7 @@ class SB_Shortcode
                         <?php if ($price) : ?>
                             <div class="sb-card-price">
                                 <span class="sb-price-from">Price: </span>
-                                <span class="sb-price-amount"><?php echo esc_html($currency . number_format((float)$price, 2)); ?>
+                                <span class="sb-price-amount"><?php echo esc_html($currency . number_format((float)$price, 0)); ?>
                                     <?php echo esc_html(get_option('sb_currency', 'PHP')); ?></span>
                             </div>
                         <?php endif; ?>

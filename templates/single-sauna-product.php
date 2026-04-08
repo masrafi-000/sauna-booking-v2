@@ -118,7 +118,7 @@ while (have_posts()) : the_post();
             <?php if ($price) : ?>
             <div class="sb-detail-price">
                 Price:
-                <strong><?php echo esc_html($currency . number_format((float)$price, 2, '.', '') . ' ' . $currency_code); ?></strong>
+                <strong><?php echo esc_html($currency . number_format((float)$price, 0, '.', '') . ' ' . $currency_code); ?></strong>
                 per person
             </div>
             <?php endif; ?>
@@ -316,7 +316,7 @@ while (have_posts()) : the_post();
                     <div class="sb-card-price">
                         <span class="sb-price-from">From</span>
                         <span
-                            class="sb-price-amount"><?php echo esc_html($currency . number_format((float)$ap_price, 2, '.', '')); ?></span>
+                            class="sb-price-amount"><?php echo esc_html($currency . number_format((float)$ap_price, 0, '.', '')); ?></span>
                     </div>
                     <?php endif; ?>
                 </div>

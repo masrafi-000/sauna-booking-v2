@@ -112,7 +112,7 @@ class SB_Accommodation_Shortcode
                         <?php if ($price_per_night) : ?>
                             <div class="sb-card-price">
                                 <span class="sb-price-from">Price: </span>
-                                <span class="sb-price-amount"><?php echo esc_html($currency . number_format((float) $price_per_night, 2)); ?>
+                                <span class="sb-price-amount"><?php echo esc_html($currency . number_format((float) $price_per_night, 0)); ?>
                                     <?php echo esc_html($currency_code); ?> / night</span>
                             </div>
                         <?php endif; ?>

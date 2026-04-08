@@ -80,7 +80,7 @@ while (have_posts()) : the_post();
 
             <div class="sb-card-price" style="margin-bottom: 30px;">
                 <span class="sb-price-from">Price:</span>
-                <span class="sb-price-amount"><?php echo esc_html($currency . number_format((float)$price_per_night, 2)); ?></span>
+                <span class="sb-price-amount"><?php echo esc_html($currency . number_format((float)$price_per_night, 0)); ?></span>
                 <span class="sb-price-period">/ night</span>
             </div>
 
@@ -533,7 +533,7 @@ function updateSelectionUI() {
                 <div class="sb-meta-item">Check-out: <strong>${checkOut}</strong></div>
                 <div class="sb-meta-item">Duration: <strong>${nights} night${nights > 1 ? 's' : ''}</strong></div>
                 <div class="sb-card-price" style="margin-top:10px;">
-                    <span class="sb-price-amount">${currency}${(nights * roomPrice).toFixed(2)}</span>
+                    <span class="sb-price-amount">${currency}${(nights * roomPrice).toFixed(0)}</span>
                 </div>
             </div>
         `;
@@ -551,17 +551,17 @@ function updateBookingSummary() {
     // Update button text with price
     const submitBtnText = document.querySelector('#acc-submit-btn #sbPayBtnText');
     if (submitBtnText) {
-        submitBtnText.innerText = `Request Reservation — ${currency}${total.toFixed(2)}`;
+        submitBtnText.innerText = `Request Reservation — ${currency}${total.toFixed(0)}`;
     }
     
     document.getElementById('sbAccBookingSummary').innerHTML = `
         <div style="background:var(--sb-green-pale); padding:15px; border-radius:10px; margin-bottom:20px;">
             <p style="margin:0; font-weight:600;">Check-in: ${checkIn}</p>
             <p style="margin:5px 0; font-weight:600;">Check-out: ${checkOut}</p>
-            <p style="margin:0; color:var(--sb-green);">Total: ${currency}${total.toFixed(2)} (${nights} nights)</p>
+            <p style="margin:0; color:var(--sb-green);">Total: ${currency}${total.toFixed(0)} (${nights} nights)</p>
         </div>
     `;
-    document.getElementById('sbAccAmountTotal').innerText = `Total Amount: ${currency}${total.toFixed(2)}`;
+    document.getElementById('sbAccAmountTotal').innerText = `Total Amount: ${currency}${total.toFixed(0)}`;
 }
 
 async function processBooking() {

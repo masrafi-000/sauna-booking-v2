@@ -99,7 +99,7 @@ class SB_Accommodation_Admin
                                     <?php echo date('M j', strtotime($booking['check_in_date'])); ?> - 
                                     <?php echo date('M j, Y', strtotime($booking['check_out_date'])); ?>
                                 </td>
-                                <td><?php echo esc_html(get_option('sb_currency_symbol', '₱') . number_format($booking['total_amount'], 2)); ?></td>
+                                <td><?php echo esc_html(get_option('sb_currency_symbol', '₱') . number_format($booking['total_amount'], 0)); ?></td>
                                 <td>
                                     <span class="sb-status-badge status-<?php echo esc_attr($booking['booking_status']); ?>">
                                         <?php echo esc_html(ucfirst($booking['booking_status'])); ?>
@@ -177,7 +177,7 @@ class SB_Accommodation_Admin
                         <tr><th>Check-in</th><td><?php echo date('l, F j, Y', strtotime($booking->check_in_date)); ?></td></tr>
                         <tr><th>Check-out</th><td><?php echo date('l, F j, Y', strtotime($booking->check_out_date)); ?></td></tr>
                         <tr><th>Guests</th><td><?php echo intval($booking->occupant_count); ?></td></tr>
-                        <tr><th>Total Amount</th><td><span class="sb-price" style="font-weight:700; color:#111b19;"><?php echo esc_html(get_option('sb_currency_symbol', '₱') . number_format($booking->total_amount, 2)); ?></span></td></tr>
+                        <tr><th>Total Amount</th><td><span class="sb-price" style="font-weight:700; color:#111b19;"><?php echo esc_html(get_option('sb_currency_symbol', '₱') . number_format($booking->total_amount, 0)); ?></span></td></tr>
                         <tr><th>Status</th><td>
                             <span class="sb-status-badge status-<?php echo esc_attr($booking->booking_status); ?>">
                                 <?php echo ucfirst($booking->booking_status); ?>
