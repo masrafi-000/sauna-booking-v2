@@ -42,6 +42,7 @@ class SB_Ajax {
         $end_hour_meta   = get_post_meta( $product_id, '_sb_end_hour',   true );
         $start_hour      = ( $start_hour_meta !== '' ) ? intval( $start_hour_meta ) : 7;
         $end_hour        = ( $end_hour_meta !== '' )   ? intval( $end_hour_meta )   : 22;
+        if ( $end_hour === 0 ) $end_hour = 24;
 
         $duration   = intval( get_post_meta( $product_id, '_sb_slot_duration', true ) ?: 60 );
         if ( $duration <= 0 ) $duration = 60;
