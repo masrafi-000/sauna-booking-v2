@@ -61,9 +61,6 @@ class SB_Shortcode
                                 </svg>
                             </div>
                         <?php endif; ?>
-                        <?php if ($badge) : ?>
-                            <span class="sb-card-badge"><?php echo esc_html($badge); ?></span>
-                        <?php endif; ?>
                         <div class="sb-card-overlay"></div>
                     </div>
                     <div class="sb-card-body">

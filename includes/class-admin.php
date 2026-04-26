@@ -25,6 +25,16 @@ class SB_Admin {
         if ( strpos( $hook, 'sb-bookings' ) !== false || strpos( $hook, 'sb-settings' ) !== false ) {
             wp_enqueue_style( 'sb-admin-style', SB_URL . 'assets/css/sauna-admin.css', [], SB_VERSION );
         }
+
+        // Enqueue media on post edit screen for our CPTs
+        global $post_type;
+        if ( in_array( $hook, [ 'post.php', 'post-new.php' ] ) ) {
+            if ( in_array( $post_type, [ 'sauna_product', 'accommodation_room' ] ) ) {
+                wp_enqueue_media();
+                wp_enqueue_script( 'sb-admin-media', SB_URL . 'assets/js/sb-admin-media.js', [ 'jquery' ], SB_VERSION, true );
+                wp_enqueue_style( 'sb-admin-media-style', SB_URL . 'assets/css/sb-admin-media.css', [], SB_VERSION );
+            }
+        }
     }
 
     public static function render_bookings_page() {

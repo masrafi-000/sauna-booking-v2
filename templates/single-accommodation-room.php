@@ -14,7 +14,6 @@ while (have_posts()) : the_post();
     $room_id         = get_the_ID();
     $title           = get_the_title();
     $price_per_night = get_post_meta($room_id, '_sb_price_per_night', true);
-    $room_category   = get_post_meta($room_id, '_sb_room_category',   true);
     $max_occupants   = get_post_meta($room_id, '_sb_max_occupants',   true) ?: 2;
     $location        = trim((string) get_post_meta($room_id, '_sb_location', true));
     $gallery_raw     = get_post_meta($room_id, '_sb_gallery',         true);
@@ -76,7 +75,6 @@ while (have_posts()) : the_post();
         <!-- RIGHT: Details & Booking -->
         <div class="sb-product-details">
             <h1 class="sb-detail-title"><?php echo esc_html($title); ?></h1>
-            <p class="sb-detail-price"><?php echo esc_html($room_category); ?></p>
 
             <div class="sb-card-price" style="margin-bottom: 30px;">
                 <span class="sb-price-from">Price:</span>

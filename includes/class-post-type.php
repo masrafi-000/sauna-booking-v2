@@ -7,6 +7,11 @@ class SB_Post_Type {
         add_action( 'init',           [ __CLASS__, 'register_cpt' ] );
         add_action( 'add_meta_boxes', [ __CLASS__, 'add_meta_boxes' ] );
         add_action( 'save_post',      [ __CLASS__, 'save_meta' ] );
+        
+        // Remove default custom fields box
+        add_action( 'admin_menu', function() {
+            remove_meta_box( 'postcustom', 'sauna_product', 'normal' );
+        });
     }
 
     /* ── Register CPT (also called directly from activation hook) ──────────── */
@@ -48,9 +53,11 @@ class SB_Post_Type {
         $seats      = get_post_meta( $post->ID, '_sb_seats',         true ) ?: 6;
         $badge      = get_post_meta( $post->ID, '_sb_badge',         true );
         $location   = get_post_meta( $post->ID, '_sb_location',      true );
-        $start_hour = get_post_meta( $post->ID, '_sb_start_hour',    true ) ?: 7;
-        $end_hour   = get_post_meta( $post->ID, '_sb_end_hour',      true ) ?: 22;
-        $slot_dur   = get_post_meta( $post->ID, '_sb_slot_duration', true ) ?: 60;
+        $start_hour_meta = get_post_meta( $post->ID, '_sb_start_hour', true );
+        $end_hour_meta   = get_post_meta( $post->ID, '_sb_end_hour',   true );
+        $start_hour      = ( $start_hour_meta !== '' ) ? intval( $start_hour_meta ) : 7;
+        $end_hour        = ( $end_hour_meta !== '' )   ? intval( $end_hour_meta )   : 22;
+        $slot_dur        = get_post_meta( $post->ID, '_sb_slot_duration', true ) ?: 60;
         $features   = get_post_meta( $post->ID, '_sb_features',      true );
         $age_limit  = get_post_meta( $post->ID, '_sb_age_limit',     true ) ?: 18;
         $gallery    = get_post_meta( $post->ID, '_sb_gallery',       true );
@@ -71,10 +78,6 @@ class SB_Post_Type {
             <div class="sb-mf">
                 <label>Total Seats Per Slot *</label>
                 <input type="number" name="sb_seats" value="<?php echo esc_attr($seats); ?>" min="1" />
-            </div>
-            <div class="sb-mf">
-                <label>City Badge (shown on card)</label>
-                <input type="text" name="sb_badge" value="<?php echo esc_attr($badge); ?>" placeholder="DUBLIN" />
             </div>
             <div class="sb-mf">
                 <label>Location Address (shown on detail page)</label>
@@ -102,12 +105,47 @@ class SB_Post_Type {
                 <input type="number" name="sb_age_limit" value="<?php echo esc_attr($age_limit); ?>" min="0" />
             </div>
             <div class="sb-mf sb-mf-full">
-                <label>Amenities / Features <span class="sb-meta-note">(comma-separated)</span></label>
-                <input type="text" name="sb_features" value="<?php echo esc_attr($features); ?>" placeholder="Plunge Pools, Changing Facilities, Toilets, Hot Shower" />
+                <label>Amenities / Features</label>
+                <div class="sb-list-wrap">
+                    <div class="sb-list-add-row">
+                        <input type="text" class="sb-list-input" placeholder="e.g. Hot Shower" />
+                        <button type="button" class="button sb-add-list-item">Add</button>
+                    </div>
+                    <input type="hidden" name="sb_features" class="sb-list-hidden" value="<?php echo esc_attr($features); ?>" />
+                    <div class="sb-list-preview">
+                        <?php
+                        if ($features) {
+                            $items = array_filter(array_map('trim', explode(',', $features)));
+                            foreach ($items as $item) {
+                                echo '<div class="sb-list-tag">';
+                                echo '<span>' . esc_html($item) . '</span>';
+                                echo '<button type="button" class="sb-list-remove" data-val="' . esc_attr($item) . '">✕</button>';
+                                echo '</div>';
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+                <p class="sb-meta-note">Add features like "Plunge Pools", "Changing Facilities", etc.</p>
             </div>
             <div class="sb-mf sb-mf-full">
-                <label>Gallery Image URLs <span class="sb-meta-note">(one URL per line — used as thumbnails)</span></label>
-                <textarea name="sb_gallery" rows="4" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"><?php echo esc_textarea($gallery); ?></textarea>
+                <label>Sauna Gallery</label>
+                <input type="hidden" name="sb_gallery" id="sb_sauna_gallery_input" value="<?php echo esc_attr($gallery); ?>" />
+                <div class="sb-gallery-preview" id="sb_sauna_gallery_preview">
+                    <?php
+                    if ($gallery) {
+                        $urls = array_filter(array_map('trim', explode("\n", $gallery)));
+                        foreach ($urls as $url) {
+                            echo '<div class="sb-gallery-item">';
+                            echo '<img src="' . esc_url($url) . '" />';
+                            echo '<button type="button" class="sb-gallery-remove" data-url="' . esc_attr($url) . '" data-input="sb_sauna_gallery_input">✕</button>';
+                            echo '</div>';
+                        }
+                    }
+                    ?>
+                </div>
+                <button type="button" class="button sb-manage-gallery-btn" data-input="sb_sauna_gallery_input" data-preview="sb_sauna_gallery_preview">Manage Gallery Images</button>
+                <p class="sb-meta-note">Click the button to select images from the Media Library.</p>
             </div>
         </div>
         <?php

@@ -80,9 +80,6 @@ class SB_Accommodation_Shortcode
                                 </svg>
                             </div>
                         <?php endif; ?>
-                        <?php if ($room_category) : ?>
-                            <span class="sb-card-badge"><?php echo esc_html($room_category); ?></span>
-                        <?php endif; ?>
                         <div class="sb-card-overlay"></div>
                     </div>
                     <div class="sb-card-body">

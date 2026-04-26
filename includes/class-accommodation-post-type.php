@@ -9,6 +9,11 @@ class SB_Accommodation_Post_Type
         add_action('init',           [__CLASS__, 'register_cpt']);
         add_action('add_meta_boxes', [__CLASS__, 'add_meta_boxes']);
         add_action('save_post',      [__CLASS__, 'save_meta']);
+
+        // Remove default custom fields box
+        add_action('admin_menu', function() {
+            remove_meta_box('postcustom', 'accommodation_room', 'normal');
+        });
     }
 
     /* ── Register CPT ──────────────────────────────────────────────────────── */
@@ -73,26 +78,12 @@ class SB_Accommodation_Post_Type
                 <input type="number" step="0.01" name="sb_price_per_night" value="<?php echo esc_attr($price_per_night); ?>" placeholder="80.00" required />
             </div>
 
-            <div class="sb-mf">
-                <label>Room Category *</label>
-                <select name="sb_room_category" required>
-                    <option value="">-- Select Category --</option>
-                    <option value="Standard Room" <?php selected($room_category, 'Standard Room'); ?>>Standard Room</option>
-                    <option value="Deluxe Suite" <?php selected($room_category, 'Deluxe Suite'); ?>>Deluxe Suite</option>
-                    <option value="Premium Room" <?php selected($room_category, 'Premium Room'); ?>>Premium Room</option>
-                    <option value="Economy Room" <?php selected($room_category, 'Economy Room'); ?>>Economy Room</option>
-                </select>
-            </div>
 
             <div class="sb-mf">
                 <label>Max Occupants *</label>
                 <input type="number" name="sb_max_occupants" value="<?php echo esc_attr($max_occupants); ?>" min="1" max="10" required />
             </div>
 
-            <div class="sb-mf">
-                <label>Room Type Display Name</label>
-                <input type="text" name="sb_room_type_name" value="<?php echo esc_attr(get_the_title($post->ID)); ?>" placeholder="e.g., Deluxe Studio" />
-            </div>
 
             <div class="sb-mf">
                 <label>Location Address (shown on card & detail page)</label>
@@ -100,8 +91,23 @@ class SB_Accommodation_Post_Type
             </div>
 
             <div class="sb-mf sb-mf-full">
-                <label>Gallery (one URL per line)</label>
-                <textarea name="sb_gallery" rows="4" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"><?php echo esc_textarea($gallery); ?></textarea>
+                <label>Room Gallery</label>
+                <input type="hidden" name="sb_gallery" id="sb_room_gallery_input" value="<?php echo esc_attr($gallery); ?>" />
+                <div class="sb-gallery-preview" id="sb_room_gallery_preview">
+                    <?php
+                    if ($gallery) {
+                        $urls = array_filter(array_map('trim', explode("\n", $gallery)));
+                        foreach ($urls as $url) {
+                            echo '<div class="sb-gallery-item">';
+                            echo '<img src="' . esc_url($url) . '" />';
+                            echo '<button type="button" class="sb-gallery-remove" data-url="' . esc_attr($url) . '" data-input="sb_room_gallery_input">✕</button>';
+                            echo '</div>';
+                        }
+                    }
+                    ?>
+                </div>
+                <button type="button" class="button sb-manage-gallery-btn" data-input="sb_room_gallery_input" data-preview="sb_room_gallery_preview">Manage Gallery Images</button>
+                <p class="sb-meta-note">Click the button to select images from the Media Library.</p>
             </div>
         </div>
 <?php

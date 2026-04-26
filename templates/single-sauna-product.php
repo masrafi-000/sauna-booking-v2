@@ -18,7 +18,6 @@ while (have_posts()) : the_post();
     $title       = get_the_title();
     $price       = get_post_meta($pid, '_sb_price',         true);
     $seats       = get_post_meta($pid, '_sb_seats',         true) ?: 6;
-    $badge       = get_post_meta($pid, '_sb_badge',         true);
     $location    = get_post_meta($pid, '_sb_location',      true);
     $features    = get_post_meta($pid, '_sb_features',      true);
     $age_limit   = get_post_meta($pid, '_sb_age_limit',     true) ?: 18;
