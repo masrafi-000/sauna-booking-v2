@@ -151,6 +151,14 @@
   function openCalendar() {
     $calOverlay.addClass("active");
     $("body").addClass("sb-overflow-hidden");
+
+    // Auto-select today
+    var todayStr = formatDate(
+      TODAY.getFullYear(),
+      TODAY.getMonth() + 1,
+      TODAY.getDate()
+    );
+    selectDate(todayStr);
   }
 
   /* ── Render calendar ─────────────────────────────────────── */

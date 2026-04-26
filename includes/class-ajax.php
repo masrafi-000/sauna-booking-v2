@@ -38,16 +38,33 @@ class SB_Ajax {
             wp_send_json_error( [ 'message' => 'Invalid date format.' ] );
         }
 
-        $start_hour = intval( get_post_meta( $product_id, '_sb_start_hour',    true ) ?: 7 );
-        $end_hour   = intval( get_post_meta( $product_id, '_sb_end_hour',      true ) ?: 22 );
+        $start_hour_meta = get_post_meta( $product_id, '_sb_start_hour', true );
+        $end_hour_meta   = get_post_meta( $product_id, '_sb_end_hour',   true );
+        $start_hour      = ( $start_hour_meta !== '' ) ? intval( $start_hour_meta ) : 7;
+        $end_hour        = ( $end_hour_meta !== '' )   ? intval( $end_hour_meta )   : 22;
+
         $duration   = intval( get_post_meta( $product_id, '_sb_slot_duration', true ) ?: 60 );
-        $total_seats = intval( get_post_meta( $product_id, '_sb_seats',        true ) ?: 6 );
+        if ( $duration <= 0 ) $duration = 60;
+
+        $total_seats = intval( get_post_meta( $product_id, '_sb_seats', true ) ?: 6 );
 
         $slots = [];
         $current = $start_hour * 60; // in minutes
         $end     = $end_hour   * 60;
 
+        // Get current time in WordPress local timezone
+        $now       = function_exists('current_datetime') ? current_datetime() : new DateTimeImmutable('now', wp_timezone());
+        $today_str = $now->format( 'Y-m-d' );
+        $is_today  = ( $date === $today_str );
+        $now_mins  = intval( $now->format( 'H' ) ) * 60 + intval( $now->format( 'i' ) );
+
         while ( $current + $duration <= $end ) {
+            // Skip past slots if the date is today
+            if ( $is_today && $current < $now_mins ) {
+                $current += $duration;
+                continue;
+            }
+
             $slot_start = self::mins_to_time( $current );
             $slot_end   = self::mins_to_time( $current + $duration );
             $booked     = SB_Database::get_booked_seats( $product_id, $date, $slot_start );
@@ -64,7 +81,8 @@ class SB_Ajax {
             $current += $duration;
         }
 
-        wp_send_json_success( [ 'slots' => $slots, 'date_label' => date( 'M j, Y', strtotime($date) ) ] );
+        $formatted_date = function_exists('wp_date') ? wp_date( 'M j, Y', strtotime($date) ) : date( 'M j, Y', strtotime($date) );
+        wp_send_json_success( [ 'slots' => $slots, 'date_label' => $formatted_date ] );
     }
 
     /* ── SUBMIT BOOKING QUERY (Bypasses Stripe) ────────────────────────────── */
